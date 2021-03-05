@@ -8,14 +8,11 @@
     "strictPropertyInitialization": false,
     "baseUrl": "./src",
     "paths": {
-      "@modules/*": [
-        "modules/*"
+      "@services/*": [
+        "services/*"
       ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@shared/*": [
-        "shared/*"
+      "@models/*": [
+        "models/*"
       ]
     },
     "esModuleInterop": true,
