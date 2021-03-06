@@ -5,6 +5,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
+    "strictNullChecks": false,
     "strictPropertyInitialization": false,
     "baseUrl": "./src",
     "paths": {
@@ -16,6 +17,21 @@
       ],
       "@config/*": [
         "config/*"
+      ],
+      "@dtos/*": [
+        "dtos/*"
+      ],
+      "@repositories/*": [
+        "repositories/*"
+      ],
+      "@errors/*": [
+        "errors/*"
+      ],
+      "@controllers/*": [
+        "controllers/*"
+      ],
+      "@routes/*": [
+        "routes/*"
       ]
     },
     "esModuleInterop": true,
