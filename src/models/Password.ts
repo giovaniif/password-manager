@@ -4,24 +4,29 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  OneToMany
+  ManyToOne,
+  JoinColumn
 } from 'typeorm'
 
-import { Password } from './Password'
+import { User } from './User'
 
-@Entity('users')
-export class User {
+@Entity('passwords')
+export class Password {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
   @Column()
-  email: string
+  title: string
 
   @Column()
-  password: string
+  value: string
 
-  @OneToMany(() => Password, password => password.user)
-  passwords: Password[]
+  @ManyToOne(() => User, user => user.passwords)
+  @JoinColumn({ name: 'user_id' })
+  user: User
+
+  @Column()
+  user_id: string
 
   @CreateDateColumn()
   created_at: Date
