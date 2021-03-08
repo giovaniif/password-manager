@@ -24,6 +24,13 @@ describe('SignUp', () => {
       })).rejects.toBeInstanceOf(AppError)
   })
 
+  it('should return error when trying to create user with a password smaller than 4 digits', async () => {
+    await expect(createUserService.execute({
+      email: 'riccog.25@gmail.com',
+      password: '123'
+    })).rejects.toBeInstanceOf(AppError)
+  })
+
   it('should create a user if valid info is provided', async () => {
     const user = await createUserService.execute({
       email: 'riccog.25@gmail.com',

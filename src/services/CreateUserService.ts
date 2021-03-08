@@ -9,9 +9,11 @@ export class CreateUserService {
   public async execute({ email, password }: ICreateUserDTO): Promise<User> {
     const findRepeatedUser = await this.usersRepository.findByEmail(email)
 
-    if (findRepeatedUser) {
+    if (findRepeatedUser)
       throw new AppError('This email is already in use')
-    }
+
+    if (password.length < 4)
+      throw new AppError('Password too short')
 
     const user = await this.usersRepository.create({ email, password })
 
