@@ -1,3 +1,4 @@
+import { AppError } from '@errors/AppError'
 import { Password } from '@models/Password'
 import { FakeHashProvider } from '@providers/fakes/FakeHashProvider'
 import { IHashProvider } from '@providers/IHashProvider'
@@ -21,7 +22,17 @@ describe('Create Password', () => {
     fakePasswordsRepository = new FakePasswordsRepository()
 
     createUserService = new CreateUserService(fakeUsersRepository, fakeHashProvider)
-    createPasswordService = new CreatePasswordService(fakePasswordsRepository)
+    createPasswordService = new CreatePasswordService(fakePasswordsRepository, fakeUsersRepository)
+  })
+
+  it('should not create password with invalid user_id', async () => {
+    await expect(createPasswordService.execute({
+      userId: 'invalid-user-id',
+      password: {
+        title: 'Test',
+        value: '1234'
+      }
+    })).rejects.toBeInstanceOf(AppError)
   })
 
   it('should create a password if valid info is provided', async () => {
