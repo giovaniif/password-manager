@@ -3,3 +3,5 @@ requirements/
 coverage/
 
 ormconfig.json
+
+.env
