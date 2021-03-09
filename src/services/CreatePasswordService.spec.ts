@@ -22,7 +22,7 @@ describe('Create Password', () => {
     fakePasswordsRepository = new FakePasswordsRepository()
 
     createUserService = new CreateUserService(fakeUsersRepository, fakeHashProvider)
-    createPasswordService = new CreatePasswordService(fakePasswordsRepository, fakeUsersRepository)
+    createPasswordService = new CreatePasswordService(fakePasswordsRepository, fakeUsersRepository, fakeHashProvider)
   })
 
   it('should not create password with invalid user_id', async () => {
