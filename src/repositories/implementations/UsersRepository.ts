@@ -19,10 +19,10 @@ export class UsersRepository implements IUsersRepository {
   }
 
   public async findByEmail(email: string): Promise<User | undefined> {
-    const foundUser = await this.usersRepository.findOne({
-      where: { email }
-    })
+    return this.usersRepository.findOne({ where: { email } })
+  }
 
-    return foundUser
+  public async findById(id: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({ where: { id } })
   }
 }
