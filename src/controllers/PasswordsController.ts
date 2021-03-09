@@ -7,7 +7,8 @@ import { BCryptHashProvider } from '@providers/implementations/BCryptHashProvide
 
 export class PasswordsController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { userId, password } = request.body
+    const user_id = request.user.id;
+    const { password } = request.body
 
     const passwordsRepository = new PasswordsRepository()
     const usersRepository = new UsersRepository()
@@ -20,7 +21,7 @@ export class PasswordsController {
 
     const createdPassword = await createPassword.execute({
       password,
-      userId
+      userId: user_id
     })
 
     delete createdPassword.value
