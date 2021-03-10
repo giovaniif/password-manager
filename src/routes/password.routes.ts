@@ -9,5 +9,6 @@ const passwordsController = new PasswordsController()
 passwordRouter.use(ensureAuthenticated)
 
 passwordRouter.post('/', passwordsController.create)
+passwordRouter.get('/', passwordsController.index)
 
 export { passwordRouter }

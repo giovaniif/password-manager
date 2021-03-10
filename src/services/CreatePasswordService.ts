@@ -9,7 +9,6 @@ export class CreatePasswordService {
   constructor(
     private passwordsRepository: IPasswordsRepository,
     private usersRepository: IUsersRepository,
-    private hashProvider: IHashProvider
   ) { }
 
   public async execute(passwordData: ICreatePasswordDTO): Promise<Password> {
@@ -18,14 +17,8 @@ export class CreatePasswordService {
     if (!findUserById)
       throw new AppError('Invalid user id')
 
-    const hashedPassword = await this.hashProvider.generateHash(passwordData.password.value)
-
     const password = await this.passwordsRepository.create({
-      userId: passwordData.userId,
-      password: {
-        title: passwordData.password.title,
-        value: hashedPassword
-      },
+      ...passwordData
     })
 
     return password

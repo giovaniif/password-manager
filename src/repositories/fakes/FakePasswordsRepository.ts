@@ -3,6 +3,7 @@ import { v4 } from 'uuid'
 import { ICreatePasswordDTO } from '@dtos/ICreatePasswordDTO'
 import { Password } from '@models/Password'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
+import { IGetUserPasswordsDTO } from '@dtos/IGetUserPasswordsDTO'
 
 export class FakePasswordsRepository implements IPasswordsRepository {
   private passwords: Password[] = []
@@ -15,5 +16,9 @@ export class FakePasswordsRepository implements IPasswordsRepository {
     this.passwords.push(password)
 
     return password
+  }
+
+  public async getAllFromUser({ userId }: IGetUserPasswordsDTO): Promise<Password[]> {
+    return this.passwords.filter(password => password.user_id !== userId)
   }
 }

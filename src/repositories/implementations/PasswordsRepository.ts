@@ -3,6 +3,7 @@ import { getRepository, Repository } from 'typeorm'
 import { ICreatePasswordDTO } from '@dtos/ICreatePasswordDTO'
 import { Password } from '@models/Password'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
+import { IGetUserPasswordsDTO } from '@dtos/IGetUserPasswordsDTO'
 
 export class PasswordsRepository implements IPasswordsRepository {
   private passwordsRepository: Repository<Password>
@@ -20,5 +21,10 @@ export class PasswordsRepository implements IPasswordsRepository {
     await this.passwordsRepository.save(password)
 
     return password
+  }
+
+  public async getAllFromUser({ userId }: IGetUserPasswordsDTO): Promise<Password[]> {
+    //TODO decrypt passwords
+    return this.passwordsRepository.find({ where: { user_id: userId } })
   }
 }
