@@ -36,6 +36,6 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
 })
 
 app.listen(
-  process.env.APP_PORT,
+  process.env.APP_PORT || 3333,
   () => console.log(`app running on port: ${process.env.APP_PORT}`)
 )
