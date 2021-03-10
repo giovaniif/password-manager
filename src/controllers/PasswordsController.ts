@@ -4,6 +4,7 @@ import { PasswordsRepository } from '@repositories/implementations/PasswordsRepo
 import { CreatePasswordService } from '@services/CreatePasswordService'
 import { UsersRepository } from '@repositories/implementations/UsersRepository'
 import { GetUserPasswordsService } from '@services/GetUserPasswordsService'
+import { TDEAEncryptionProvider } from '@providers/implementations/TDEAEncryptionProvider'
 
 export class PasswordsController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -12,9 +13,12 @@ export class PasswordsController {
 
     const passwordsRepository = new PasswordsRepository()
     const usersRepository = new UsersRepository()
+    const encryptionProvider = new TDEAEncryptionProvider()
+
     const createPassword = new CreatePasswordService(
       passwordsRepository,
       usersRepository,
+      encryptionProvider
     )
 
     const createdPassword = await createPassword.execute({
