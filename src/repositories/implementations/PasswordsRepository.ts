@@ -14,8 +14,8 @@ export class PasswordsRepository implements IPasswordsRepository {
 
   public async create(passwordData: ICreatePasswordDTO): Promise<Password> {
     const password = this.passwordsRepository.create({
+      ...passwordData,
       user_id: passwordData.userId,
-      ...passwordData.password
     })
 
     await this.passwordsRepository.save(password)
@@ -24,7 +24,12 @@ export class PasswordsRepository implements IPasswordsRepository {
   }
 
   public async getAllFromUser({ userId }: IGetUserPasswordsDTO): Promise<Password[]> {
-    //TODO decrypt passwords
     return this.passwordsRepository.find({ where: { user_id: userId } })
+  }
+
+  public async getSingle(passwordId: string): Promise<Password> {
+    return this.passwordsRepository.findOne({
+      where: { id: passwordId }
+    })
   }
 }

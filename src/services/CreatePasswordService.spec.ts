@@ -32,10 +32,8 @@ describe('Create Password', () => {
   it('should not create password with invalid user_id', async () => {
     await expect(createPasswordService.execute({
       userId: 'invalid-user-id',
-      password: {
-        title: 'Test',
-        value: '1234'
-      }
+      title: 'Test',
+      value: '1234'
     })).rejects.toBeInstanceOf(AppError)
   })
 
@@ -47,10 +45,8 @@ describe('Create Password', () => {
 
     const password = await createPasswordService.execute({
       userId: user.id,
-      password: {
-        title: 'test',
-        value: '1234'
-      },
+      title: 'test',
+      value: '1234'
     })
 
     expect(password).toBeInstanceOf(Password)
@@ -67,10 +63,8 @@ describe('Create Password', () => {
 
     const password = await createPasswordService.execute({
       userId: user.id,
-      password: {
-        title: 'test',
-        value
-      },
+      title: 'test',
+      value
     })
 
     const decrytedPassword = fakeEncryptionProvider.decrypt(password.value)

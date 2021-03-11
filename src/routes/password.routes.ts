@@ -10,5 +10,6 @@ passwordRouter.use(ensureAuthenticated)
 
 passwordRouter.post('/', passwordsController.create)
 passwordRouter.get('/', passwordsController.index)
+passwordRouter.get('/:passwordId', passwordsController.show)
 
 export { passwordRouter }

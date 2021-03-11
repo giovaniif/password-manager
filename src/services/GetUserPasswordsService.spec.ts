@@ -23,18 +23,14 @@ describe('Get user passwords', () => {
     })
 
     await fakePasswordsRepository.create({
-      password: {
-        title: 'Password 1',
-        value: '1234'
-      },
+      title: 'Password 1',
+      value: '1234',
       userId: user.id
     })
 
     await fakePasswordsRepository.create({
-      password: {
-        title: 'Password 3',
-        value: '12345'
-      },
+      title: 'Password 3',
+      value: '12345',
       userId: user.id
     })
 
