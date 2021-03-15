@@ -4,13 +4,16 @@ import { authConfig } from '@config/auth'
 import { IAuthenticateUserDTO } from '@dtos/IAuthenticateUserDTO'
 import { IUsersRepository } from '@repositories/IUsersRepository'
 import { User } from '@models/User'
-import { AppError } from '@errors/AppError'
 import { IHashProvider } from '@providers/IHashProvider'
+import { Either, left, right } from '@shared/Either'
+import { InvalidEmailError, WrongPasswordError } from '@errors/User'
 
-interface IResponse {
+interface IUserResponse {
   user: User
   token: string
 }
+
+type IResponse = Either<InvalidEmailError | WrongPasswordError, IUserResponse>
 
 export class AuthenticateUserService {
   constructor(
@@ -19,13 +22,14 @@ export class AuthenticateUserService {
   ) { }
 
   public async execute({ email, password }: IAuthenticateUserDTO): Promise<IResponse> {
-    const user = await this.usersRepository.findByEmail(email)
-    if (!user)
-      throw new AppError('Email not found')
+    const userOrError = await this.usersRepository.findByEmail(email)
+    if (userOrError.isLeft()) return left(userOrError.value)
+
+    const user = userOrError.value
 
     const passwordMatched = await this.hashProvider.compare(password, user.password)
     if (!passwordMatched)
-      throw new AppError('Wrong password')
+      return left(new WrongPasswordError())
 
     const { expiresIn, secret } = authConfig.jwt
 
@@ -34,6 +38,6 @@ export class AuthenticateUserService {
       expiresIn,
     })
 
-    return { user, token }
+    return right({ user, token })
   }
 }

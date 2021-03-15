@@ -35,6 +35,9 @@
       ],
       "@routes/*": [
         "routes/*"
+      ],
+      "@shared/*": [
+        "shared/*"
       ]
     },
     "esModuleInterop": true,

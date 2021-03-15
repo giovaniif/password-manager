@@ -3,6 +3,8 @@ import { v4 } from 'uuid'
 import { ICreateUserDTO } from '@dtos/ICreateUserDTO'
 import { User } from '@models/User'
 import { IUsersRepository } from '@repositories/IUsersRepository'
+import { Either, left, right } from '@shared/Either'
+import { InvalidEmailError } from '@errors/User'
 
 export class FakeUsersRepository implements IUsersRepository {
   private users: User[] = []
@@ -17,8 +19,13 @@ export class FakeUsersRepository implements IUsersRepository {
     return user
   }
 
-  public async findByEmail(email: string): Promise<User | undefined> {
-    return this.users.find(user => user.email === email)
+  public async findByEmail(email: string): Promise<Either<InvalidEmailError, User>> {
+    const user = this.users.find(user => user.email === email)
+
+    if (!user)
+      return left(new InvalidEmailError())
+
+    return right(user)
   }
 
   public async findById(id: string): Promise<User | undefined> {

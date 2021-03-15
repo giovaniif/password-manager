@@ -1,21 +1,29 @@
-import { Response, Request } from 'express'
-
 import { AuthenticateUserService } from '@services/AuthenticateUserService'
 import { UsersRepository } from '@repositories/implementations/UsersRepository'
 import { BCryptHashProvider } from '@providers/implementations/BCryptHashProvider'
+import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/helpers/http'
 
 export class SessionsController {
-  public async create(request: Request, response: Response): Promise<Response> {
-    const { email, password } = request.body
+  public async create(httpRequest: HttpRequest): Promise<HttpResponse> {
+    const { email, password } = httpRequest.body
 
     const usersRepository = new UsersRepository()
     const bCryptHashProvider = new BCryptHashProvider()
     const authUser = new AuthenticateUserService(usersRepository, bCryptHashProvider)
 
-    const { token, user } = await authUser.execute({ email, password })
+    try {
+      const authenticateUserResponse = await authUser.execute({ email, password })
 
-    delete user.password
+      if (authenticateUserResponse.isLeft()) {
+        return badRequest(authenticateUserResponse.value)
+      }
 
-    return response.json({ token, user })
+      const { token, user } = authenticateUserResponse.value
+      delete user.password
+
+      return ok({ token, user })
+    } catch (err) {
+      return serverError(err.message)
+    }
   }
 }
