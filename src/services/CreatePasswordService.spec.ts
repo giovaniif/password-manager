@@ -30,46 +30,51 @@ describe('Create Password', () => {
   })
 
   it('should not create password with invalid user_id', async () => {
-    await expect(createPasswordService.execute({
+    const passwordOrError = await createPasswordService.execute({
       userId: 'invalid-user-id',
       title: 'Test',
       value: '1234'
-    })).rejects.toBeInstanceOf(AppError)
+    })
+
+    expect(passwordOrError.isLeft()).toBeTruthy()
+    expect(passwordOrError.value).toBeInstanceOf(Error)
   })
 
   it('should create a password if valid info is provided', async () => {
-    const user = await createUserService.execute({
+    const user = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '1234'
     })
 
-    const password = await createPasswordService.execute({
+    const passwordOrError = await createPasswordService.execute({
       userId: user.id,
       title: 'test',
       value: '1234'
     })
 
-    expect(password).toBeInstanceOf(Password)
-    expect(password).toHaveProperty('id')
+    expect(passwordOrError.isRight()).toBeTruthy()
   })
 
   it('should create an encrypted password if valid info is provided', async () => {
-    const user = await createUserService.execute({
+    const user = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '1234'
     })
 
-    const value = '1234'
+    const encrypt = jest.spyOn(fakeEncryptionProvider, 'encrypt')
+    const value = 'password123'
 
-    const password = await createPasswordService.execute({
+    const passwordOrError = await createPasswordService.execute({
       userId: user.id,
       title: 'test',
       value
     })
 
+
+    const password = passwordOrError.isRight() ? passwordOrError.value : undefined
     const decrytedPassword = fakeEncryptionProvider.decrypt(password.value)
 
-    expect(password).toBeInstanceOf(Password)
-    expect(decrytedPassword).toEqual(decrytedPassword)
+    expect(decrytedPassword).toEqual(value)
+    expect(encrypt).toHaveBeenCalledTimes(1)
   })
 })
