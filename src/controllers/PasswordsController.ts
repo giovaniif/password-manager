@@ -6,11 +6,12 @@ import { UsersRepository } from '@repositories/implementations/UsersRepository'
 import { GetUserPasswordsService } from '@services/GetUserPasswordsService'
 import { TDEAEncryptionProvider } from '@providers/implementations/TDEAEncryptionProvider'
 import { GetSinglePasswordService } from '@services/GetSinglePasswordService'
+import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/helpers/http'
 
 export class PasswordsController {
-  public async create(request: Request, response: Response): Promise<Response> {
-    const user_id = request.user.id
-    const { title, value } = request.body
+  public async create(httpRequest: HttpRequest): Promise<HttpResponse> {
+    const user_id = httpRequest.user.id
+    const { title, value } = httpRequest.body
 
     const passwordsRepository = new PasswordsRepository()
     const usersRepository = new UsersRepository()
@@ -22,15 +23,23 @@ export class PasswordsController {
       encryptionProvider
     )
 
-    const createdPassword = await createPassword.execute({
-      userId: user_id,
-      title,
-      value
-    })
+    try {
+      const passwordOrError = await createPassword.execute({
+        userId: user_id,
+        title,
+        value
+      })
 
-    delete createdPassword.value
+      if (passwordOrError.isLeft())
+        return badRequest(passwordOrError.value)
 
-    return response.json(createdPassword)
+      const password = passwordOrError.value
+      delete password.value
+
+      return ok(password)
+    } catch (err) {
+      return serverError(err.message)
+    }
   }
 
   public async index(request: Request, response: Response): Promise<Response> {

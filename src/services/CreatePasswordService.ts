@@ -1,9 +1,12 @@
 import { ICreatePasswordDTO } from '@dtos/ICreatePasswordDTO'
-import { AppError } from '@errors/AppError'
+import { InvalidUserIdError } from '@errors/User'
 import { Password } from '@models/Password'
 import { IEncryptionProvider } from '@providers/IEncryptionProvider'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
 import { IUsersRepository } from '@repositories/IUsersRepository'
+import { Either, left, right } from '@shared/Either'
+
+type IResponse = Either<InvalidUserIdError | Error, Password>
 
 export class CreatePasswordService {
   constructor(
@@ -12,20 +15,24 @@ export class CreatePasswordService {
     private encryptionProvider: IEncryptionProvider,
   ) { }
 
-  public async execute({ value, title, userId }: ICreatePasswordDTO): Promise<Password> {
-    const findUserById = await this.usersRepository.findById(userId)
+  public async execute({ value, title, userId }: ICreatePasswordDTO): Promise<IResponse> {
+    const userOrError = await this.usersRepository.findById(userId)
 
-    if (!findUserById)
-      throw new AppError('Invalid user id')
+    if (userOrError.isLeft())
+      return left(userOrError.value)
 
     const encryptedPassword = this.encryptionProvider.encrypt(value)
 
-    const createdPassword = await this.passwordsRepository.create({
+    const passwordOrError = await this.passwordsRepository.create({
       userId,
       title,
       value: encryptedPassword
     })
 
-    return createdPassword
+    if (passwordOrError.isLeft())
+      return left(passwordOrError.value)
+
+    const password = passwordOrError.value
+    return right(password)
   }
 }

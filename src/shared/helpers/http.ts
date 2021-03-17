@@ -2,11 +2,15 @@ import { ServerError } from '@errors/ServerError'
 
 export interface HttpResponse {
   statusCode: number
-  body: any
+  body?: any
 }
 
 export interface HttpRequest {
   body?: any
+  user?: {
+    id: string
+  }
+  headers?: any
 }
 
 export const badRequest = (error: Error): HttpResponse => ({

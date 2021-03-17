@@ -4,6 +4,7 @@ import { ICreatePasswordDTO } from '@dtos/ICreatePasswordDTO'
 import { Password } from '@models/Password'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
 import { IGetUserPasswordsDTO } from '@dtos/IGetUserPasswordsDTO'
+import { Either, left, right } from '@shared/Either'
 
 export class PasswordsRepository implements IPasswordsRepository {
   private passwordsRepository: Repository<Password>
@@ -12,15 +13,18 @@ export class PasswordsRepository implements IPasswordsRepository {
     this.passwordsRepository = getRepository(Password)
   }
 
-  public async create(passwordData: ICreatePasswordDTO): Promise<Password> {
-    const password = this.passwordsRepository.create({
-      ...passwordData,
-      user_id: passwordData.userId,
-    })
+  public async create(passwordData: ICreatePasswordDTO): Promise<Either<Error, Password>> {
+    try {
+      const password = this.passwordsRepository.create({
+        ...passwordData,
+        user_id: passwordData.userId,
+      })
 
-    await this.passwordsRepository.save(password)
-
-    return password
+      await this.passwordsRepository.save(password)
+      return right(password)
+    } catch (err) {
+      return left(err.message)
+    }
   }
 
   public async getAllFromUser({ userId }: IGetUserPasswordsDTO): Promise<Password[]> {

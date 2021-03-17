@@ -10,3 +10,8 @@ export class WrongPasswordError extends Error {
   }
 }
 
+export class InvalidUserIdError extends Error {
+  constructor() {
+    super('Invalid user id')
+  }
+}
