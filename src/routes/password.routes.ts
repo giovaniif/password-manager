@@ -12,8 +12,8 @@ passwordRouter.use((request, response, next) =>
   ensureAuthenticated(request as HttpRequest, response as HttpResponse, next
   ))
 
-passwordRouter.post('/', adaptRoute(passwordsController))
+passwordRouter.post('/', adaptRoute(passwordsController.create))
 passwordRouter.get('/', passwordsController.index)
-passwordRouter.get('/:passwordId', passwordsController.show)
+passwordRouter.get('/:passwordId', adaptRoute(passwordsController.show))
 
 export { passwordRouter }

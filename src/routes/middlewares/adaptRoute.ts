@@ -1,17 +1,15 @@
 
 import { Request, Response } from 'express'
 
-import { HttpRequest } from '@shared/helpers/http'
-import { IController } from '@controllers/IController'
+import { HttpRequest, HttpResponse } from '@shared/helpers/http'
 
-export const adaptRoute = (controller: IController) => {
+type IControllerMethod = (httpRequest: HttpRequest) => Promise<HttpResponse>
+
+export const adaptRoute = (controllerMethod: IControllerMethod) => {
   return async (req: Request, res: Response) => {
-    const httpRequest: HttpRequest = {
-      body: req.body,
-      user: req.user,
-      headers: req.headers
-    }
-    const httpResponse = await controller.create(httpRequest)
+    const httpRequest: HttpRequest = { ...req }
+
+    const httpResponse = await controllerMethod(httpRequest)
     res.status(httpResponse.statusCode).json(httpResponse.body)
   }
 }

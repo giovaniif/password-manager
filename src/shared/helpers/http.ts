@@ -11,6 +11,7 @@ export interface HttpRequest {
     id: string
   }
   headers?: any
+  params?: any
 }
 
 export const badRequest = (error: Error): HttpResponse => ({

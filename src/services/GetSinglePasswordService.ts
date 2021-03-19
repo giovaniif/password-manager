@@ -1,9 +1,13 @@
 import { IGetSinglePasswordServiceDTO } from '@dtos/IGetSinglePasswordServiceDTO'
-import { AppError } from '@errors/AppError'
+import { InvalidPasswordIdError } from '@errors/Password'
+import { InvalidUserIdError } from '@errors/User'
 import { Password } from '@models/Password'
 import { IEncryptionProvider } from '@providers/IEncryptionProvider'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
 import { IUsersRepository } from '@repositories/IUsersRepository'
+import { Either, left, right } from '@shared/Either'
+
+type IResponse = Either<InvalidUserIdError | InvalidPasswordIdError, Password>
 
 export class GetSinglePasswordService {
   constructor(
@@ -12,20 +16,17 @@ export class GetSinglePasswordService {
     private encryptionProvider: IEncryptionProvider
   ) { }
 
-  public async execute({ passwordId, userId }: IGetSinglePasswordServiceDTO): Promise<Password> {
-    const userExists = await this.usersRepository.findById(userId)
+  public async execute({ passwordId, userId }: IGetSinglePasswordServiceDTO): Promise<IResponse> {
+    const userOrError = await this.usersRepository.findById(userId)
+    if (userOrError.isLeft()) return left(userOrError.value)
 
-    if (!userExists)
-      throw new AppError('User does not exist')
+    const encryptedPasswordOrError = await this.passwordsRepository.getSingle(passwordId)
+    if (encryptedPasswordOrError.isLeft()) return left(encryptedPasswordOrError.value)
 
-    const encryptedPassword = await this.passwordsRepository.getSingle(passwordId)
+    const encryptedPassword = encryptedPasswordOrError.value.value
+    const decryptedPassword = encryptedPasswordOrError.value
+    decryptedPassword.value = this.encryptionProvider.decrypt(encryptedPassword)
 
-    if (!encryptedPassword)
-      throw new AppError('Invalid passwordId')
-
-    const decryptedPassword = encryptedPassword
-    decryptedPassword.value = this.encryptionProvider.decrypt(encryptedPassword.value)
-
-    return decryptedPassword
+    return right(decryptedPassword)
   }
 }

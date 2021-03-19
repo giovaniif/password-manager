@@ -54,9 +54,9 @@ export class PasswordsController {
     return response.json(passwords)
   }
 
-  public async show(request: Request, response: Response): Promise<Response> {
-    const user_id = request.user.id
-    const { passwordId } = request.params
+  public async show(httpRequest: HttpRequest): Promise<HttpResponse> {
+    const user_id = httpRequest.user.id
+    const { passwordId } = httpRequest.params
 
     const usersRepository = new UsersRepository()
     const passwordsRepository = new PasswordsRepository()
@@ -67,11 +67,18 @@ export class PasswordsController {
       encryptionProvider
     )
 
-    const password = await getSinglePassword.execute({
-      passwordId,
-      userId: user_id
-    })
+    try {
+      const passwordOrError = await getSinglePassword.execute({
+        passwordId,
+        userId: user_id
+      })
 
-    return response.json(password)
+      if (passwordOrError.isLeft())
+        return badRequest(passwordOrError.value)
+
+      return ok(passwordOrError.value)
+    } catch (err) {
+      return serverError(err.message)
+    }
   }
 }
