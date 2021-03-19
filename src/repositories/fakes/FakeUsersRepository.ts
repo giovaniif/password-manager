@@ -9,14 +9,14 @@ import { InvalidEmailError, InvalidUserIdError } from '@errors/User'
 export class FakeUsersRepository implements IUsersRepository {
   private users: User[] = []
 
-  public async create(userData: ICreateUserDTO): Promise<User> {
+  public async create(userData: ICreateUserDTO): Promise<Either<Error, User>> {
     const user = new User()
 
     Object.assign(user, { id: v4() }, userData)
 
     this.users.push(user)
 
-    return user
+    return right(user)
   }
 
   public async findByEmail(email: string): Promise<Either<InvalidEmailError, User>> {
