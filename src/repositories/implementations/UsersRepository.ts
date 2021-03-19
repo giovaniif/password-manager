@@ -13,11 +13,15 @@ export class UsersRepository implements IUsersRepository {
     this.usersRepository = getRepository(User)
   }
 
-  public async create(userData: ICreateUserDTO): Promise<User> {
-    const user = this.usersRepository.create(userData)
-    await this.usersRepository.save(user)
+  public async create(userData: ICreateUserDTO): Promise<Either<Error, User>> {
+    try {
+      const user = this.usersRepository.create(userData)
+      await this.usersRepository.save(user)
 
-    return user
+      return right(user)
+    } catch (err) {
+      return left(new Error('Error while creating user'))
+    }
   }
 
   public async findByEmail(email: string): Promise<Either<InvalidEmailError, User>> {

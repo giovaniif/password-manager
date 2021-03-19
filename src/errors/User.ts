@@ -15,3 +15,15 @@ export class InvalidUserIdError extends Error {
     super('Invalid user id')
   }
 }
+
+export class RepeatedEmailError extends Error {
+  constructor() {
+    super('This email is already in use')
+  }
+}
+
+export class PasswordTooShortError extends Error {
+  constructor() {
+    super('Password must be at least 4 digits')
+  }
+}

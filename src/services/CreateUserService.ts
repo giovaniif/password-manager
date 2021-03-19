@@ -1,8 +1,11 @@
-import { AppError } from '@errors/AppError'
 import { User } from '@models/User'
 import { IUsersRepository } from '@repositories/IUsersRepository'
 import { ICreateUserDTO } from '@dtos/ICreateUserDTO'
 import { IHashProvider } from '@providers/IHashProvider'
+import { Either, left, right } from '@shared/Either'
+import { PasswordTooShortError, RepeatedEmailError } from '@errors/User'
+
+type IResponse = Either<RepeatedEmailError | PasswordTooShortError, User>
 
 export class CreateUserService {
   constructor(
@@ -10,22 +13,25 @@ export class CreateUserService {
     private hashProvider: IHashProvider
   ) { }
 
-  public async execute({ email, password }: ICreateUserDTO): Promise<User> {
-    const findRepeatedUser = await this.usersRepository.findByEmail(email)
+  public async execute({ email, password }: ICreateUserDTO): Promise<IResponse> {
+    const repeatedUser = await this.usersRepository.findByEmail(email)
 
-    if (findRepeatedUser)
-      throw new AppError('This email is already in use')
+    if (repeatedUser.isRight())
+      return left(new RepeatedEmailError())
 
     if (password.length < 4)
-      throw new AppError('Password too short')
+      return left(new PasswordTooShortError())
 
     const hashedPassword = await this.hashProvider.generateHash(password)
 
-    const user = await this.usersRepository.create({
+    const userOrError = await this.usersRepository.create({
       email,
       password: hashedPassword
     })
 
-    return user
+    if (userOrError.isLeft())
+      return left(userOrError.value)
+
+    return right(userOrError.value)
   }
 }

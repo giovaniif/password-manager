@@ -12,6 +12,6 @@ export const adaptRoute = (controller: IController) => {
       headers: req.headers
     }
     const httpResponse = await controller.create(httpRequest)
-    res.status(httpResponse.statusCode).json({ message: httpResponse.body })
+    res.status(httpResponse.statusCode).json(httpResponse.body)
   }
 }

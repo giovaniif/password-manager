@@ -1,20 +1,26 @@
-import { Request, Response } from 'express'
-
 import { CreateUserService } from '@services/CreateUserService'
 import { UsersRepository } from '@repositories/implementations/UsersRepository'
 import { BCryptHashProvider } from '@providers/implementations/BCryptHashProvider'
+import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/helpers/http'
 
 export class UsersController {
-  public async create(request: Request, response: Response): Promise<Response> {
+  public async create(httpRequest: HttpRequest): Promise<HttpResponse> {
     const usersRepository = new UsersRepository()
     const hashProvider = new BCryptHashProvider()
     const createUser = new CreateUserService(usersRepository, hashProvider)
 
-    const { email, password } = request.body
+    const { email, password } = httpRequest.body
 
-    const user = await createUser.execute({ email, password })
-    delete user.password
+    try {
+      const userOrError = await createUser.execute({ email, password })
 
-    return response.json(user)
+      if (userOrError.isLeft())
+        return badRequest(userOrError.value)
+
+      const user = userOrError.value
+      return ok(user)
+    } catch (err) {
+      return serverError(err.message)
+    }
   }
 }
