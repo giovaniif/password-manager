@@ -5,6 +5,7 @@ import { Password } from '@models/Password'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
 import { IGetUserPasswordsDTO } from '@dtos/IGetUserPasswordsDTO'
 import { Either, left, right } from '@shared/Either'
+import { InvalidPasswordIdError } from '@errors/Password'
 
 export class FakePasswordsRepository implements IPasswordsRepository {
   private passwords: Password[] = []
@@ -26,7 +27,12 @@ export class FakePasswordsRepository implements IPasswordsRepository {
     return this.passwords.filter(password => password.user_id === userId)
   }
 
-  public async getSingle(passwordId: string): Promise<Password | undefined> {
-    return this.passwords.find(password => password.id === passwordId)
+  public async getSingle(passwordId: string): Promise<Either<InvalidPasswordIdError, Password>> {
+    const password = this.passwords.find(password => password.id === passwordId)
+
+    if (!password)
+      return left(new InvalidPasswordIdError())
+
+    return right(password)
   }
 }

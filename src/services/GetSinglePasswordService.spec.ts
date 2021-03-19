@@ -1,4 +1,3 @@
-import { AppError } from '@errors/AppError'
 import { FakeEncryptionProvider } from '@providers/fakes/FakeEncryptionProvider'
 import { IEncryptionProvider } from '@providers/IEncryptionProvider'
 import { FakePasswordsRepository } from '@repositories/fakes/FakePasswordsRepository'
@@ -26,37 +25,58 @@ describe('Get single password', () => {
   })
 
   it('should return a single decrypted password', async () => {
-    const { id: userId } = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '123123',
     })
 
-    const { id: passwordId } = await fakePasswordsRepository.create({
+    let userId
+    if (userOrError.isRight())
+      userId = userOrError.value.id
+
+    const passwordOrError = await fakePasswordsRepository.create({
       userId,
       title: 'My Password',
       value: '12345'
     })
 
-    const password = await getSinglePasswordService.execute({ passwordId, userId })
-    expect(password.value).toBe('12345')
+    let passwordId
+    if (passwordOrError.isRight())
+      passwordId = passwordOrError.value.id
+
+    const singlePasswordOrError = await getSinglePasswordService.execute({ passwordId, userId })
+    let singlePassword
+
+    if (singlePasswordOrError.isRight())
+      singlePassword = singlePasswordOrError.value
+
+    expect(singlePassword.value).toBe('12345')
   })
 
   it('should throw an error when trying to get a password from a non existing user', async () => {
-    await expect(getSinglePasswordService.execute({
+    const passwordOrError = await getSinglePasswordService.execute({
       passwordId: '123-456-abc',
       userId: 'non-existing-user-id',
-    })).rejects.toBeInstanceOf(AppError)
+    })
+
+    expect(passwordOrError.isLeft()).toBeTruthy()
   })
 
   it('should throw an error when trying to get a non existing password', async () => {
-    const { id: userId } = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '123123',
     })
 
-    await expect(getSinglePasswordService.execute({
+    let userId
+    if (userOrError.isRight())
+      userId = userOrError.value.id
+
+    const passwordOrError = await getSinglePasswordService.execute({
       passwordId: 'invalid-password-id',
       userId
-    })).rejects.toBeInstanceOf(AppError)
+    })
+
+    expect(passwordOrError.isLeft()).toBeTruthy()
   })
 })
