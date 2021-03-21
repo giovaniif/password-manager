@@ -13,7 +13,7 @@ passwordRouter.use((request, response, next) =>
   ))
 
 passwordRouter.post('/', adaptRoute(passwordsController.create))
-passwordRouter.get('/', passwordsController.index)
+passwordRouter.get('/', adaptRoute(passwordsController.index))
 passwordRouter.get('/:passwordId', adaptRoute(passwordsController.show))
 
 export { passwordRouter }

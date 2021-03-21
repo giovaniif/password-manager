@@ -7,6 +7,7 @@ import { GetUserPasswordsService } from '@services/GetUserPasswordsService'
 import { TDEAEncryptionProvider } from '@providers/implementations/TDEAEncryptionProvider'
 import { GetSinglePasswordService } from '@services/GetSinglePasswordService'
 import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/helpers/http'
+import { left } from '@shared/Either'
 
 export class PasswordsController {
   public async create(httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -42,16 +43,23 @@ export class PasswordsController {
     }
   }
 
-  public async index(request: Request, response: Response): Promise<Response> {
-    const user_id = request.user.id
+  public async index(httpRequest: HttpRequest): Promise<HttpResponse> {
+    const user_id = httpRequest.user.id
 
     const passwordsRepository = new PasswordsRepository()
     const usersRepository = new UsersRepository()
     const getPasswords = new GetUserPasswordsService(passwordsRepository, usersRepository)
 
-    const passwords = await getPasswords.execute({ userId: user_id })
+    try {
+      const passwordsOrError = await getPasswords.execute({ userId: user_id })
 
-    return response.json(passwords)
+      if (passwordsOrError.isLeft())
+        return badRequest(passwordsOrError.value)
+
+      return ok(passwordsOrError.value)
+    } catch (err) {
+      return serverError(err.message)
+    }
   }
 
   public async show(httpRequest: HttpRequest): Promise<HttpResponse> {
