@@ -17,10 +17,14 @@ describe('Get user passwords', () => {
   })
 
   it('should return user passwords', async () => {
-    const user = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '123123'
     })
+
+    let user
+    if (userOrError.isRight())
+      user = userOrError.value
 
     await fakePasswordsRepository.create({
       title: 'Password 1',
@@ -36,11 +40,12 @@ describe('Get user passwords', () => {
 
     const passwords = await getUserPasswords.execute({ userId: user.id })
 
-    expect(passwords).toHaveLength(2)
+    expect(passwords.isRight()).toBeTruthy()
   })
 
-  it('should throw an error if the user does not exist', async () => {
-    await expect(getUserPasswords.execute({ userId: 'non-existing-user-id' }))
-      .rejects.toBeInstanceOf(AppError)
+  it('should return error if the user does not exist', async () => {
+    const passwordsOrError = await getUserPasswords.execute({ userId: 'non-existing-user-id' })
+
+    expect(passwordsOrError.isLeft()).toBeTruthy()
   })
 })
