@@ -1,11 +1,11 @@
 import { Router } from 'express'
 
-import { UsersController } from '@domains/user/controllers/UsersController'
+import { CreateUserController } from '@domains/user/controllers/CreateUserController'
 import { adaptRoute } from '@shared/infra/http/routes/middlewares/adaptRoute'
 
 const userRouter = Router()
-const usersController = new UsersController()
+const createUsers = new CreateUserController()
 
-userRouter.post('/', adaptRoute(usersController.create))
+userRouter.post('/', adaptRoute(createUsers))
 
 export { userRouter }

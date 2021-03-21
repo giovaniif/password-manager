@@ -2,9 +2,10 @@ import { container } from 'tsyringe'
 
 import { CreateUserService } from '@domains/user/services/CreateUserService'
 import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/infra/http/helpers/http'
+import { IController } from '@shared/infra/http/interfaces/IController'
 
-export class UsersController {
-  public async create(httpRequest: HttpRequest): Promise<HttpResponse> {
+export class CreateUserController implements IController {
+  public async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const createUser = container.resolve(CreateUserService)
 
     const { email, password } = httpRequest.body

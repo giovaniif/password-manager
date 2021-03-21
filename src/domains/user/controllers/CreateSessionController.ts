@@ -2,9 +2,10 @@ import { container } from 'tsyringe'
 
 import { AuthenticateUserService } from '@domains/user/services/AuthenticateUserService'
 import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/infra/http/helpers/http'
+import { IController } from '@shared/infra/http/interfaces/IController'
 
-export class SessionsController {
-  public async create(httpRequest: HttpRequest): Promise<HttpResponse> {
+export class CreateSessionsController implements IController {
+  public async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const { email, password } = httpRequest.body
 
     const authUser = container.resolve(AuthenticateUserService)

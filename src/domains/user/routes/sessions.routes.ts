@@ -1,11 +1,11 @@
 import { Router } from 'express'
 
-import { SessionsController } from '@domains/user/controllers/SessionsController'
+import { CreateSessionsController } from '@domains/user/controllers/CreateSessionController'
 import { adaptRoute } from '@shared/infra/http/routes/middlewares/adaptRoute'
 
-const sessionsController = new SessionsController()
+const createSessions = new CreateSessionsController()
 const sessionsRouter = Router()
 
-sessionsRouter.post('/', adaptRoute(sessionsController.create))
+sessionsRouter.post('/', adaptRoute(createSessions))
 
 export { sessionsRouter }
