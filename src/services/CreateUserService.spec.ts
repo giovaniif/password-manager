@@ -1,8 +1,8 @@
 import { FakeUsersRepository } from '@repositories/fakes/FakeUsersRepository'
 import { CreateUserService } from '@services/CreateUserService'
-import { IHashProvider } from '@providers/IHashProvider'
+import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { IUsersRepository } from '@repositories/IUsersRepository'
-import { FakeHashProvider } from '@providers/fakes/FakeHashProvider'
+import { FakeHashProvider } from '@shared/container/providers/fakes/FakeHashProvider'
 
 let createUserService: CreateUserService
 let fakeUsersRepository: IUsersRepository

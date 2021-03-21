@@ -1,3 +1,5 @@
+import { inject, injectable } from 'tsyringe'
+
 import { IGetUserPasswordsDTO } from '@dtos/IGetUserPasswordsDTO'
 import { InvalidPasswordIdError } from '@errors/Password'
 import { InvalidUserIdError } from '@errors/User'
@@ -8,9 +10,13 @@ import { Either, left, right } from '@shared/Either'
 
 type IResponse = Either<InvalidPasswordIdError, Password[]>
 
+@injectable()
 export class GetUserPasswordsService {
   constructor(
+    @inject('PasswordsRepository')
     private passwordsRepository: IPasswordsRepository,
+
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository
   ) { }
 

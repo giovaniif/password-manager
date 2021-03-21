@@ -1,18 +1,26 @@
+import { inject, injectable } from 'tsyringe'
+
 import { IGetSinglePasswordServiceDTO } from '@dtos/IGetSinglePasswordServiceDTO'
 import { InvalidPasswordIdError } from '@errors/Password'
 import { InvalidUserIdError } from '@errors/User'
 import { Password } from '@models/Password'
-import { IEncryptionProvider } from '@providers/IEncryptionProvider'
+import { IEncryptionProvider } from '@shared/container/providers/models/IEncryptionProvider'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
 import { IUsersRepository } from '@repositories/IUsersRepository'
 import { Either, left, right } from '@shared/Either'
 
 type IResponse = Either<InvalidUserIdError | InvalidPasswordIdError, Password>
 
+@injectable()
 export class GetSinglePasswordService {
   constructor(
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('PasswordsRepository')
     private passwordsRepository: IPasswordsRepository,
+
+    @inject('EncryptionProvider')
     private encryptionProvider: IEncryptionProvider
   ) { }
 

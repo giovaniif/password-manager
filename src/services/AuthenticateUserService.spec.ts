@@ -1,5 +1,5 @@
-import { FakeHashProvider } from '@providers/fakes/FakeHashProvider'
-import { IHashProvider } from '@providers/IHashProvider'
+import { FakeHashProvider } from '@shared/container/providers/fakes/FakeHashProvider'
+import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { FakeUsersRepository } from '@repositories/fakes/FakeUsersRepository'
 import { IUsersRepository } from '@repositories/IUsersRepository'
 import { AuthenticateUserService } from './AuthenticateUserService'
@@ -17,10 +17,15 @@ describe('Authenticate user', () => {
   })
 
   it('should authenticate user', async () => {
-    const user = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'new-user@provider.com',
       password: '123123'
     })
+
+    let user
+    if (userOrError.isRight()) {
+      user = userOrError.value
+    }
 
     const authenticateUserResponse = await authenticateUser.execute({ ...user })
 
@@ -38,10 +43,15 @@ describe('Authenticate user', () => {
   })
 
   it('should not authenticate with wrong password', async () => {
-    const user = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'new-user@provider.com',
       password: '123123'
     })
+
+    let user
+    if (userOrError.isRight()) {
+      user = userOrError.value
+    }
 
     const authenticateUserResponse = await authenticateUser.execute({
       email: user.email,

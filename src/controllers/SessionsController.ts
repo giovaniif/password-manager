@@ -1,6 +1,6 @@
 import { AuthenticateUserService } from '@services/AuthenticateUserService'
 import { UsersRepository } from '@repositories/implementations/UsersRepository'
-import { BCryptHashProvider } from '@providers/implementations/BCryptHashProvider'
+import { BCryptHashProvider } from '@shared/container/providers/implementations/BCryptHashProvider'
 import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/helpers/http'
 
 export class SessionsController {

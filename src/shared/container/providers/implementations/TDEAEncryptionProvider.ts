@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { IEncryptionProvider } from '@providers/IEncryptionProvider'
+import { IEncryptionProvider } from '@shared/container/providers/models/IEncryptionProvider'
 
 export class TDEAEncryptionProvider implements IEncryptionProvider {
   public encrypt(toBeEncrypted: string): string {

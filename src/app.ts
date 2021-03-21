@@ -1,14 +1,13 @@
 import 'dotenv/config'
 import 'reflect-metadata'
 
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import cors from 'cors'
 import 'express-async-errors'
-import { errors } from 'celebrate'
 
 import '@config/database'
+import '@shared/container'
 
-import { AppError } from '@errors/AppError'
 import { routes } from './routes'
 
 const app = express()

@@ -1,10 +1,11 @@
 import { sign } from 'jsonwebtoken'
+import { inject, injectable } from 'tsyringe'
 
 import { authConfig } from '@config/auth'
 import { IAuthenticateUserDTO } from '@dtos/IAuthenticateUserDTO'
 import { IUsersRepository } from '@repositories/IUsersRepository'
 import { User } from '@models/User'
-import { IHashProvider } from '@providers/IHashProvider'
+import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { Either, left, right } from '@shared/Either'
 import { InvalidEmailError, WrongPasswordError } from '@errors/User'
 
@@ -15,9 +16,13 @@ interface IUserResponse {
 
 type IResponse = Either<InvalidEmailError | WrongPasswordError, IUserResponse>
 
+@injectable()
 export class AuthenticateUserService {
   constructor(
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('HashProvider')
     private hashProvider: IHashProvider
   ) { }
 

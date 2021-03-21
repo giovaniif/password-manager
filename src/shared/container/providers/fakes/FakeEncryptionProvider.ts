@@ -1,4 +1,4 @@
-import { IEncryptionProvider } from '@providers/IEncryptionProvider'
+import { IEncryptionProvider } from '@shared/container/providers/models/IEncryptionProvider'
 
 export class FakeEncryptionProvider implements IEncryptionProvider {
   public encrypt(toBeEncrypted: string): string {

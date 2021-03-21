@@ -1,5 +1,5 @@
-import { FakeEncryptionProvider } from '@providers/fakes/FakeEncryptionProvider'
-import { IEncryptionProvider } from '@providers/IEncryptionProvider'
+import { FakeEncryptionProvider } from '@shared/container/providers/fakes/FakeEncryptionProvider'
+import { IEncryptionProvider } from '@shared/container/providers/models/IEncryptionProvider'
 import { FakePasswordsRepository } from '@repositories/fakes/FakePasswordsRepository'
 import { FakeUsersRepository } from '@repositories/fakes/FakeUsersRepository'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'

@@ -1,15 +1,21 @@
+import { inject, injectable } from 'tsyringe'
+
 import { User } from '@models/User'
 import { IUsersRepository } from '@repositories/IUsersRepository'
 import { ICreateUserDTO } from '@dtos/ICreateUserDTO'
-import { IHashProvider } from '@providers/IHashProvider'
+import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { Either, left, right } from '@shared/Either'
 import { PasswordTooShortError, RepeatedEmailError } from '@errors/User'
 
 type IResponse = Either<RepeatedEmailError | PasswordTooShortError, User>
 
+@injectable()
 export class CreateUserService {
   constructor(
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('HashProvider')
     private hashProvider: IHashProvider
   ) { }
 

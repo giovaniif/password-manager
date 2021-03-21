@@ -1,13 +1,10 @@
-import { Response, Request } from 'express'
-
 import { PasswordsRepository } from '@repositories/implementations/PasswordsRepository'
 import { CreatePasswordService } from '@services/CreatePasswordService'
 import { UsersRepository } from '@repositories/implementations/UsersRepository'
 import { GetUserPasswordsService } from '@services/GetUserPasswordsService'
-import { TDEAEncryptionProvider } from '@providers/implementations/TDEAEncryptionProvider'
+import { TDEAEncryptionProvider } from '@shared/container/providers/implementations/TDEAEncryptionProvider'
 import { GetSinglePasswordService } from '@services/GetSinglePasswordService'
 import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/helpers/http'
-import { left } from '@shared/Either'
 
 export class PasswordsController {
   public async create(httpRequest: HttpRequest): Promise<HttpResponse> {

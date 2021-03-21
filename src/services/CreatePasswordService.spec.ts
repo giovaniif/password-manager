@@ -1,9 +1,7 @@
-import { AppError } from '@errors/AppError'
-import { Password } from '@models/Password'
-import { FakeEncryptionProvider } from '@providers/fakes/FakeEncryptionProvider'
-import { FakeHashProvider } from '@providers/fakes/FakeHashProvider'
-import { IEncryptionProvider } from '@providers/IEncryptionProvider'
-import { IHashProvider } from '@providers/IHashProvider'
+import { FakeEncryptionProvider } from '@shared/container/providers/fakes/FakeEncryptionProvider'
+import { FakeHashProvider } from '@shared/container/providers/fakes/FakeHashProvider'
+import { IEncryptionProvider } from '@shared/container/providers/models/IEncryptionProvider'
+import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { FakePasswordsRepository } from '@repositories/fakes/FakePasswordsRepository'
 import { FakeUsersRepository } from '@repositories/fakes/FakeUsersRepository'
 import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
@@ -41,10 +39,15 @@ describe('Create Password', () => {
   })
 
   it('should create a password if valid info is provided', async () => {
-    const user = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '1234'
     })
+
+    let user
+    if (userOrError.isRight()) {
+      user = userOrError.value
+    }
 
     const passwordOrError = await createPasswordService.execute({
       userId: user.id,
@@ -56,10 +59,15 @@ describe('Create Password', () => {
   })
 
   it('should create an encrypted password if valid info is provided', async () => {
-    const user = await fakeUsersRepository.create({
+    const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
       password: '1234'
     })
+
+    let user
+    if (userOrError.isRight()) {
+      user = userOrError.value
+    }
 
     const encrypt = jest.spyOn(fakeEncryptionProvider, 'encrypt')
     const value = 'password123'
