@@ -5,4 +5,6 @@ I created this project with the purpose of putting in practice a few concepts I 
 - [x] MVP using TDD
 - [x] Add Either error validation Patter
 - [x] Add dependency injection 
-- [ ] Refactor to DDD
+- [x] Refactor to DDD
+- [ ] Add useCase pattern (doing)
+- [ ] Add rateLimiter 
