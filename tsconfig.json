@@ -9,32 +9,20 @@
     "strictPropertyInitialization": false,
     "baseUrl": "./src",
     "paths": {
-      "@services/*": [
-        "services/*"
+      "@shared/*": [
+        "shared/*"
       ],
-      "@models/*": [
-        "models/*"
+      "@domains/*": [
+        "domains/*"
       ],
       "@config/*": [
         "config/*"
       ],
-      "@dtos/*": [
-        "dtos/*"
-      ],
-      "@repositories/*": [
-        "repositories/*"
-      ],
       "@errors/*": [
         "errors/*"
       ],
-      "@controllers/*": [
-        "controllers/*"
-      ],
-      "@routes/*": [
-        "routes/*"
-      ],
-      "@shared/*": [
-        "shared/*"
+      "@dtos/*": [
+        "dtos/*"
       ]
     },
     "esModuleInterop": true,

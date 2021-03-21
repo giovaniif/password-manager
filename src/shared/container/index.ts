@@ -1,15 +1,15 @@
 import { container } from 'tsyringe'
 
-import { IUsersRepository } from '@repositories/IUsersRepository'
-import { UsersRepository } from '@repositories/implementations/UsersRepository'
-import { PasswordsRepository } from '@repositories/implementations/PasswordsRepository'
-import { IPasswordsRepository } from '@repositories/IPasswordsRepository'
+import { IUsersRepository } from '@domains/user/repositories/IUsersRepository'
+import { TypeORMUsersRepository } from '@domains/user/repositories/implementations/TypeORMUsersRepository'
+import { PasswordsRepository } from '@domains/password/repositories/implementations/PasswordsRepository'
+import { IPasswordsRepository } from '@domains/password/repositories/IPasswordsRepository'
 
 import './providers'
 
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
-  UsersRepository
+  TypeORMUsersRepository
 )
 
 container.registerSingleton<IPasswordsRepository>(

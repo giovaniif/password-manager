@@ -4,5 +4,5 @@ I created this project with the purpose of putting in practice a few concepts I 
 ## TODO
 - [x] MVP using TDD
 - [x] Add Either error validation Patter
-- [ ] Add dependency injection 
+- [x] Add dependency injection 
 - [ ] Refactor to DDD

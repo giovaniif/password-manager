@@ -5,10 +5,10 @@ import express from 'express'
 import cors from 'cors'
 import 'express-async-errors'
 
-import '@config/database'
+import '@shared/infra/typeorm'
 import '@shared/container'
 
-import { routes } from './routes'
+import { routes } from '@shared/infra/http/routes'
 
 const app = express()
 

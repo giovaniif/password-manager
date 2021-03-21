@@ -1,5 +1,3 @@
-require('reflect-metadata')
-
 const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const { compilerOptions } = require('./tsconfig.json');
 
@@ -7,7 +5,7 @@ module.exports = {
   clearMocks: true,
   collectCoverage: true,
   collectCoverageFrom: [
-    '<rootDir>/src/services/*.ts'
+    '<rootDir>/src/domains/**/services/*.ts'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: [
