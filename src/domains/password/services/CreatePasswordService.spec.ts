@@ -18,14 +18,18 @@ describe('Create Password', () => {
     fakePasswordsRepository = new FakePasswordsRepository()
     fakeEncryptionProvider = new FakeEncryptionProvider()
 
-    createPasswordService = new CreatePasswordService(fakePasswordsRepository, fakeUsersRepository, fakeEncryptionProvider)
+    createPasswordService = new CreatePasswordService(
+      fakePasswordsRepository,
+      fakeUsersRepository,
+      fakeEncryptionProvider,
+    )
   })
 
   it('should not create password with invalid user_id', async () => {
     const passwordOrError = await createPasswordService.execute({
       userId: 'invalid-user-id',
       title: 'Test',
-      value: '1234'
+      value: '1234',
     })
 
     expect(passwordOrError.isLeft()).toBeTruthy()
@@ -35,7 +39,7 @@ describe('Create Password', () => {
   it('should create a password if valid info is provided', async () => {
     const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
-      password: '1234'
+      password: '1234',
     })
 
     let user
@@ -46,7 +50,7 @@ describe('Create Password', () => {
     const passwordOrError = await createPasswordService.execute({
       userId: user.id,
       title: 'test',
-      value: '1234'
+      value: '1234',
     })
 
     expect(passwordOrError.isRight()).toBeTruthy()
@@ -55,7 +59,7 @@ describe('Create Password', () => {
   it('should create an encrypted password if valid info is provided', async () => {
     const userOrError = await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
-      password: '1234'
+      password: '1234',
     })
 
     let user
@@ -69,11 +73,12 @@ describe('Create Password', () => {
     const passwordOrError = await createPasswordService.execute({
       userId: user.id,
       title: 'test',
-      value
+      value,
     })
 
-
-    const password = passwordOrError.isRight() ? passwordOrError.value : undefined
+    const password = passwordOrError.isRight()
+      ? passwordOrError.value
+      : undefined
     const decrytedPassword = fakeEncryptionProvider.decrypt(password.value)
 
     expect(decrytedPassword).toEqual(value)

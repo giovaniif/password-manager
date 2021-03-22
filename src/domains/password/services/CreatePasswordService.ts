@@ -21,24 +21,26 @@ export class CreatePasswordService {
 
     @inject('EncryptionProvider')
     private encryptionProvider: IEncryptionProvider,
-  ) { }
+  ) {}
 
-  public async execute({ value, title, userId }: ICreatePasswordDTO): Promise<IResponse> {
+  public async execute({
+    value,
+    title,
+    userId,
+  }: ICreatePasswordDTO): Promise<IResponse> {
     const userOrError = await this.usersRepository.findById(userId)
 
-    if (userOrError.isLeft())
-      return left(userOrError.value)
+    if (userOrError.isLeft()) return left(userOrError.value)
 
     const encryptedPassword = this.encryptionProvider.encrypt(value)
 
     const passwordOrError = await this.passwordsRepository.create({
       userId,
       title,
-      value: encryptedPassword
+      value: encryptedPassword,
     })
 
-    if (passwordOrError.isLeft())
-      return left(passwordOrError.value)
+    if (passwordOrError.isLeft()) return left(passwordOrError.value)
 
     const password = passwordOrError.value
     return right(password)

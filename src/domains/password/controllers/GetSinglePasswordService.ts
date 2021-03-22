@@ -2,7 +2,13 @@ import { container } from 'tsyringe'
 
 import { GetSinglePasswordService } from '@domains/password/services/GetSinglePasswordService'
 
-import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/infra/http/helpers/http'
+import {
+  badRequest,
+  HttpRequest,
+  HttpResponse,
+  ok,
+  serverError,
+} from '@shared/infra/http/helpers/http'
 import { IController } from '@shared/infra/http/interfaces/IController'
 
 export class GetSinglePasswordController implements IController {
@@ -15,11 +21,10 @@ export class GetSinglePasswordController implements IController {
     try {
       const passwordOrError = await getSinglePassword.execute({
         passwordId,
-        userId: user_id
+        userId: user_id,
       })
 
-      if (passwordOrError.isLeft())
-        return badRequest(passwordOrError.value)
+      if (passwordOrError.isLeft()) return badRequest(passwordOrError.value)
 
       return ok(passwordOrError.value)
     } catch (err) {

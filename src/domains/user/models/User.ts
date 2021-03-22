@@ -4,7 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  OneToMany
+  OneToMany,
 } from 'typeorm'
 
 import { Password } from '@domains/password/models/Password'

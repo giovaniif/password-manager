@@ -21,15 +21,21 @@ export class GetSinglePasswordService {
     private passwordsRepository: IPasswordsRepository,
 
     @inject('EncryptionProvider')
-    private encryptionProvider: IEncryptionProvider
-  ) { }
+    private encryptionProvider: IEncryptionProvider,
+  ) {}
 
-  public async execute({ passwordId, userId }: IGetSinglePasswordServiceDTO): Promise<IResponse> {
+  public async execute({
+    passwordId,
+    userId,
+  }: IGetSinglePasswordServiceDTO): Promise<IResponse> {
     const userOrError = await this.usersRepository.findById(userId)
     if (userOrError.isLeft()) return left(userOrError.value)
 
-    const encryptedPasswordOrError = await this.passwordsRepository.getSingle(passwordId)
-    if (encryptedPasswordOrError.isLeft()) return left(encryptedPasswordOrError.value)
+    const encryptedPasswordOrError = await this.passwordsRepository.getSingle(
+      passwordId,
+    )
+    if (encryptedPasswordOrError.isLeft())
+      return left(encryptedPasswordOrError.value)
 
     const encryptedPassword = encryptedPasswordOrError.value.value
     const decryptedPassword = encryptedPasswordOrError.value

@@ -1,7 +1,13 @@
 import { container } from 'tsyringe'
 
 import { AuthenticateUserService } from '@domains/user/services/AuthenticateUserService'
-import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/infra/http/helpers/http'
+import {
+  badRequest,
+  HttpRequest,
+  HttpResponse,
+  ok,
+  serverError,
+} from '@shared/infra/http/helpers/http'
 import { IController } from '@shared/infra/http/interfaces/IController'
 
 export class CreateSessionsController implements IController {
@@ -11,7 +17,10 @@ export class CreateSessionsController implements IController {
     const authUser = container.resolve(AuthenticateUserService)
 
     try {
-      const authenticateUserResponse = await authUser.execute({ email, password })
+      const authenticateUserResponse = await authUser.execute({
+        email,
+        password,
+      })
 
       if (authenticateUserResponse.isLeft()) {
         return badRequest(authenticateUserResponse.value)

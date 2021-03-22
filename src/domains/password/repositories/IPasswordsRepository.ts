@@ -7,5 +7,7 @@ import { Either } from '@shared/Either'
 export interface IPasswordsRepository {
   create(passwordData: ICreatePasswordDTO): Promise<Either<Error, Password>>
   getAllFromUser(userData: IGetUserPasswordsDTO): Promise<Password[]>
-  getSingle(passwordId: string): Promise<Either<InvalidPasswordIdError, Password>>
+  getSingle(
+    passwordId: string,
+  ): Promise<Either<InvalidPasswordIdError, Password>>
 }

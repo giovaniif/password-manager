@@ -9,10 +9,10 @@ import './providers'
 
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
-  TypeORMUsersRepository
+  TypeORMUsersRepository,
 )
 
 container.registerSingleton<IPasswordsRepository>(
   'PasswordsRepository',
-  PasswordsRepository
+  PasswordsRepository,
 )

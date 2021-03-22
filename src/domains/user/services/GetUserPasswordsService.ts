@@ -17,14 +17,13 @@ export class GetUserPasswordsService {
     private passwordsRepository: IPasswordsRepository,
 
     @inject('UsersRepository')
-    private usersRepository: IUsersRepository
-  ) { }
+    private usersRepository: IUsersRepository,
+  ) {}
 
   public async execute({ userId }: IGetUserPasswordsDTO): Promise<IResponse> {
     const userOrError = await this.usersRepository.findById(userId)
 
-    if (userOrError.isLeft())
-      return left(new InvalidUserIdError())
+    if (userOrError.isLeft()) return left(new InvalidUserIdError())
 
     const passwords = await this.passwordsRepository.getAllFromUser({ userId })
 

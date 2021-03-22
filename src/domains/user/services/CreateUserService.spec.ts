@@ -12,18 +12,21 @@ describe('SignUp', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository()
     fakeHashProvider = new FakeHashProvider()
-    createUserService = new CreateUserService(fakeUsersRepository, fakeHashProvider)
+    createUserService = new CreateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    )
   })
 
   it('should return error when trying to create user with repeated email', async () => {
     await fakeUsersRepository.create({
       email: 'riccog.25@gmail.com',
-      password: '123123'
+      password: '123123',
     })
 
     const userOrError = await createUserService.execute({
       email: 'riccog.25@gmail.com',
-      password: '123123'
+      password: '123123',
     })
 
     expect(userOrError.isLeft()).toBeTruthy()
@@ -32,7 +35,7 @@ describe('SignUp', () => {
   it('should return error when trying to create user with a password smaller than 4 digits', async () => {
     const userOrError = await createUserService.execute({
       email: 'riccog.25@gmail.com',
-      password: '123'
+      password: '123',
     })
 
     expect(userOrError.isLeft()).toBeTruthy()
@@ -43,7 +46,7 @@ describe('SignUp', () => {
 
     const userOrError = await createUserService.execute({
       email: 'riccog.25@gmail.com',
-      password: '123123'
+      password: '123123',
     })
 
     expect(userOrError.isRight()).toBeTruthy()

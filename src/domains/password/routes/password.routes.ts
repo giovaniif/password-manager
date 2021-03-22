@@ -14,8 +14,8 @@ const getSinglePassword = new GetSinglePasswordController()
 const getUserPasswords = new GetUserPasswordsController()
 
 passwordRouter.use((request, response, next) =>
-  ensureAuthenticated(request as HttpRequest, response as HttpResponse, next
-  ))
+  ensureAuthenticated(request as HttpRequest, response as HttpResponse, next),
+)
 
 passwordRouter.post('/', adaptRoute(createPassword))
 passwordRouter.get('/', adaptRoute(getUserPasswords))

@@ -2,7 +2,13 @@ import { container } from 'tsyringe'
 
 import { GetUserPasswordsService } from '@domains/user/services/GetUserPasswordsService'
 
-import { badRequest, HttpRequest, HttpResponse, ok, serverError } from '@shared/infra/http/helpers/http'
+import {
+  badRequest,
+  HttpRequest,
+  HttpResponse,
+  ok,
+  serverError,
+} from '@shared/infra/http/helpers/http'
 import { IController } from '@shared/infra/http/interfaces/IController'
 
 export class GetUserPasswordsController implements IController {
@@ -14,8 +20,7 @@ export class GetUserPasswordsController implements IController {
     try {
       const passwordsOrError = await getPasswords.execute({ userId: user_id })
 
-      if (passwordsOrError.isLeft())
-        return badRequest(passwordsOrError.value)
+      if (passwordsOrError.isLeft()) return badRequest(passwordsOrError.value)
 
       return ok(passwordsOrError.value)
     } catch (err) {

@@ -24,11 +24,12 @@ export class TypeORMUsersRepository implements IUsersRepository {
     }
   }
 
-  public async findByEmail(email: string): Promise<Either<InvalidEmailError, User>> {
+  public async findByEmail(
+    email: string,
+  ): Promise<Either<InvalidEmailError, User>> {
     const user = await this.usersRepository.findOne({ where: { email } })
 
-    if (!user)
-      return left(new InvalidEmailError)
+    if (!user) return left(new InvalidEmailError())
 
     return right(user)
   }
@@ -36,8 +37,7 @@ export class TypeORMUsersRepository implements IUsersRepository {
   public async findById(id: string): Promise<Either<InvalidUserIdError, User>> {
     const user = await this.usersRepository.findOne({ where: { id } })
 
-    if (!user)
-      return left(new InvalidUserIdError())
+    if (!user) return left(new InvalidUserIdError())
 
     return right(user)
   }

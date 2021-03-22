@@ -14,7 +14,9 @@ export class PasswordsRepository implements IPasswordsRepository {
     this.passwordsRepository = getRepository(Password)
   }
 
-  public async create(passwordData: ICreatePasswordDTO): Promise<Either<Error, Password>> {
+  public async create(
+    passwordData: ICreatePasswordDTO,
+  ): Promise<Either<Error, Password>> {
     try {
       const password = this.passwordsRepository.create({
         ...passwordData,
@@ -28,17 +30,20 @@ export class PasswordsRepository implements IPasswordsRepository {
     }
   }
 
-  public async getAllFromUser({ userId }: IGetUserPasswordsDTO): Promise<Password[]> {
+  public async getAllFromUser({
+    userId,
+  }: IGetUserPasswordsDTO): Promise<Password[]> {
     return this.passwordsRepository.find({ where: { user_id: userId } })
   }
 
-  public async getSingle(passwordId: string): Promise<Either<InvalidPasswordIdError, Password>> {
+  public async getSingle(
+    passwordId: string,
+  ): Promise<Either<InvalidPasswordIdError, Password>> {
     const password = await this.passwordsRepository.findOne({
-      where: { id: passwordId }
+      where: { id: passwordId },
     })
 
-    if (!password)
-      return left(new InvalidPasswordIdError())
+    if (!password) return left(new InvalidPasswordIdError())
 
     return right(password)
   }

@@ -13,13 +13,16 @@ describe('Authenticate user', () => {
     fakeHashProvider = new FakeHashProvider()
     fakeUsersRepository = new FakeUsersRepository()
 
-    authenticateUser = new AuthenticateUserService(fakeUsersRepository, fakeHashProvider)
+    authenticateUser = new AuthenticateUserService(
+      fakeUsersRepository,
+      fakeHashProvider,
+    )
   })
 
   it('should authenticate user', async () => {
     const userOrError = await fakeUsersRepository.create({
       email: 'new-user@provider.com',
-      password: '123123'
+      password: '123123',
     })
 
     let user
@@ -35,7 +38,7 @@ describe('Authenticate user', () => {
   it('should not authenticate a non existing user', async () => {
     const authenticateUserResponse = await authenticateUser.execute({
       email: 'non-existing-email@provider.com',
-      password: '12345'
+      password: '12345',
     })
 
     expect(authenticateUserResponse.isLeft()).toBeTruthy()
@@ -45,7 +48,7 @@ describe('Authenticate user', () => {
   it('should not authenticate with wrong password', async () => {
     const userOrError = await fakeUsersRepository.create({
       email: 'new-user@provider.com',
-      password: '123123'
+      password: '123123',
     })
 
     let user
@@ -55,7 +58,7 @@ describe('Authenticate user', () => {
 
     const authenticateUserResponse = await authenticateUser.execute({
       email: user.email,
-      password: 'wrong-password'
+      password: 'wrong-password',
     })
 
     expect(authenticateUserResponse.isLeft()).toBeTruthy()

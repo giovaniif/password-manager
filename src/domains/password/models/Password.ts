@@ -5,7 +5,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm'
 
 import { User } from '@domains/user/models/User'

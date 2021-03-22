@@ -16,27 +16,27 @@ export class CreateUserService {
     private usersRepository: IUsersRepository,
 
     @inject('HashProvider')
-    private hashProvider: IHashProvider
-  ) { }
+    private hashProvider: IHashProvider,
+  ) {}
 
-  public async execute({ email, password }: ICreateUserDTO): Promise<IResponse> {
+  public async execute({
+    email,
+    password,
+  }: ICreateUserDTO): Promise<IResponse> {
     const repeatedUser = await this.usersRepository.findByEmail(email)
 
-    if (repeatedUser.isRight())
-      return left(new RepeatedEmailError())
+    if (repeatedUser.isRight()) return left(new RepeatedEmailError())
 
-    if (password.length < 4)
-      return left(new PasswordTooShortError())
+    if (password.length < 4) return left(new PasswordTooShortError())
 
     const hashedPassword = await this.hashProvider.generateHash(password)
 
     const userOrError = await this.usersRepository.create({
       email,
-      password: hashedPassword
+      password: hashedPassword,
     })
 
-    if (userOrError.isLeft())
-      return left(userOrError.value)
+    if (userOrError.isLeft()) return left(userOrError.value)
 
     return right(userOrError.value)
   }

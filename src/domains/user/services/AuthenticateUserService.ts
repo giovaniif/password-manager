@@ -23,18 +23,23 @@ export class AuthenticateUserService {
     private usersRepository: IUsersRepository,
 
     @inject('HashProvider')
-    private hashProvider: IHashProvider
-  ) { }
+    private hashProvider: IHashProvider,
+  ) {}
 
-  public async execute({ email, password }: IAuthenticateUserDTO): Promise<IResponse> {
+  public async execute({
+    email,
+    password,
+  }: IAuthenticateUserDTO): Promise<IResponse> {
     const userOrError = await this.usersRepository.findByEmail(email)
     if (userOrError.isLeft()) return left(userOrError.value)
 
     const user = userOrError.value
 
-    const passwordMatched = await this.hashProvider.compare(password, user.password)
-    if (!passwordMatched)
-      return left(new WrongPasswordError())
+    const passwordMatched = await this.hashProvider.compare(
+      password,
+      user.password,
+    )
+    if (!passwordMatched) return left(new WrongPasswordError())
 
     const { expiresIn, secret } = authConfig.jwt
 

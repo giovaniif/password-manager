@@ -10,7 +10,11 @@ import { InvalidPasswordIdError } from '@shared/errors/Password'
 export class FakePasswordsRepository implements IPasswordsRepository {
   private passwords: Password[] = []
 
-  public async create({ userId, value, title }: ICreatePasswordDTO): Promise<Either<Error, Password>> {
+  public async create({
+    userId,
+    value,
+    title,
+  }: ICreatePasswordDTO): Promise<Either<Error, Password>> {
     try {
       const password = new Password()
 
@@ -23,15 +27,18 @@ export class FakePasswordsRepository implements IPasswordsRepository {
     }
   }
 
-  public async getAllFromUser({ userId }: IGetUserPasswordsDTO): Promise<Password[]> {
+  public async getAllFromUser({
+    userId,
+  }: IGetUserPasswordsDTO): Promise<Password[]> {
     return this.passwords.filter(password => password.user_id === userId)
   }
 
-  public async getSingle(passwordId: string): Promise<Either<InvalidPasswordIdError, Password>> {
+  public async getSingle(
+    passwordId: string,
+  ): Promise<Either<InvalidPasswordIdError, Password>> {
     const password = this.passwords.find(password => password.id === passwordId)
 
-    if (!password)
-      return left(new InvalidPasswordIdError())
+    if (!password) return left(new InvalidPasswordIdError())
 
     return right(password)
   }

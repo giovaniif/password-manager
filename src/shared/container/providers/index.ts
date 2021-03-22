@@ -5,12 +5,9 @@ import { TDEAEncryptionProvider } from './implementations/TDEAEncryptionProvider
 import { IEncryptionProvider } from './models/IEncryptionProvider'
 import { IHashProvider } from './models/IHashProvider'
 
-container.registerSingleton<IHashProvider>(
-  'HashProvider',
-  BCryptHashProvider
-)
+container.registerSingleton<IHashProvider>('HashProvider', BCryptHashProvider)
 
 container.registerSingleton<IEncryptionProvider>(
   'EncryptionProvider',
-  TDEAEncryptionProvider
+  TDEAEncryptionProvider,
 )

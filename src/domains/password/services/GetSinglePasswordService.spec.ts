@@ -20,7 +20,7 @@ describe('Get single password', () => {
     getSinglePasswordService = new GetSinglePasswordService(
       fakeUsersRepository,
       fakePasswordsRepository,
-      fakeEncryptionProvider
+      fakeEncryptionProvider,
     )
   })
 
@@ -31,20 +31,21 @@ describe('Get single password', () => {
     })
 
     let userId
-    if (userOrError.isRight())
-      userId = userOrError.value.id
+    if (userOrError.isRight()) userId = userOrError.value.id
 
     const passwordOrError = await fakePasswordsRepository.create({
       userId,
       title: 'My Password',
-      value: '12345'
+      value: '12345',
     })
 
     let passwordId
-    if (passwordOrError.isRight())
-      passwordId = passwordOrError.value.id
+    if (passwordOrError.isRight()) passwordId = passwordOrError.value.id
 
-    const singlePasswordOrError = await getSinglePasswordService.execute({ passwordId, userId })
+    const singlePasswordOrError = await getSinglePasswordService.execute({
+      passwordId,
+      userId,
+    })
     let singlePassword
 
     if (singlePasswordOrError.isRight())
@@ -69,12 +70,11 @@ describe('Get single password', () => {
     })
 
     let userId
-    if (userOrError.isRight())
-      userId = userOrError.value.id
+    if (userOrError.isRight()) userId = userOrError.value.id
 
     const passwordOrError = await getSinglePasswordService.execute({
       passwordId: 'invalid-password-id',
-      userId
+      userId,
     })
 
     expect(passwordOrError.isLeft()).toBeTruthy()

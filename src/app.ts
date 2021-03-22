@@ -34,7 +34,6 @@ app.use(routes)
 //   });
 // })
 
-app.listen(
-  process.env.APP_PORT || 3333,
-  () => console.log(`app running on port: ${process.env.APP_PORT}`)
+app.listen(process.env.APP_PORT || 3333, () =>
+  console.log(`app running on port: ${process.env.APP_PORT}`),
 )

@@ -11,7 +11,11 @@ interface ITokenPayload {
   sub: string
 }
 
-export const ensureAuthenticated = (request: HttpRequest, response: HttpResponse, next: NextFunction) => {
+export const ensureAuthenticated = (
+  request: HttpRequest,
+  response: HttpResponse,
+  next: NextFunction,
+): void => {
   const authHeader = request.headers.authorization
 
   if (!authHeader) {
@@ -26,7 +30,7 @@ export const ensureAuthenticated = (request: HttpRequest, response: HttpResponse
     const { sub } = decoded as ITokenPayload
 
     request.user = {
-      id: sub
+      id: sub,
     }
 
     return next()
