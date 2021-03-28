@@ -3,6 +3,7 @@ import { CreateUserService } from '@domains/user/services/CreateUserService'
 import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { IUsersRepository } from '@domains/user/repositories/IUsersRepository'
 import { FakeHashProvider } from '@shared/container/providers/fakes/FakeHashProvider'
+import { User } from '../models/User'
 
 let createUserService: CreateUserService
 let fakeUsersRepository: IUsersRepository
@@ -51,5 +52,16 @@ describe('SignUp', () => {
 
     expect(userOrError.isRight()).toBeTruthy()
     expect(generateHash).toHaveBeenCalled()
+  })
+
+  it('should create new users as invalid users', async () => {
+    const userOrError = await createUserService.execute({
+      email: 'riccog.25@gmail.com',
+      password: '123123',
+    })
+
+    const user = userOrError.isRight() ? userOrError.value : ({} as User)
+
+    expect(user.isValid).toBe(false)
   })
 })

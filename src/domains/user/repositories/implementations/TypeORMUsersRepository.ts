@@ -15,7 +15,7 @@ export class TypeORMUsersRepository implements IUsersRepository {
 
   public async create(userData: ICreateUserDTO): Promise<Either<Error, User>> {
     try {
-      const user = this.usersRepository.create(userData)
+      const user = this.usersRepository.create({ ...userData, isValid: false })
       await this.usersRepository.save(user)
 
       return right(user)

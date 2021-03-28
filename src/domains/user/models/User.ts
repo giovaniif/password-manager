@@ -28,4 +28,7 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  @Column('boolean')
+  isValid: boolean
 }

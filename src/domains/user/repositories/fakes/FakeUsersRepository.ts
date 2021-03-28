@@ -12,7 +12,7 @@ export class FakeUsersRepository implements IUsersRepository {
   public async create(userData: ICreateUserDTO): Promise<Either<Error, User>> {
     const user = new User()
 
-    Object.assign(user, { id: v4() }, userData)
+    Object.assign(user, { id: v4(), isValid: false }, userData)
 
     this.users.push(user)
 
