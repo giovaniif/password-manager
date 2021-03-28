@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
 
 import { ICreatePasswordDTO } from '@domains/password/dtos/ICreatePasswordDTO'
-import { InvalidUserIdError } from '@shared/errors/User'
+import { InvalidUserIdError, NonVerifiedUserError } from '@shared/errors/User'
 import { Password } from '@domains/password/models/Password'
 import { IEncryptionProvider } from '@shared/container/providers/models/IEncryptionProvider'
 import { IPasswordsRepository } from '@domains/password/repositories/IPasswordsRepository'
@@ -31,6 +31,10 @@ export class CreatePasswordService {
     const userOrError = await this.usersRepository.findById(userId)
 
     if (userOrError.isLeft()) return left(userOrError.value)
+
+    const isValidUser = userOrError.value.isValid
+
+    if (!isValidUser) return left(new NonVerifiedUserError())
 
     const encryptedPassword = this.encryptionProvider.encrypt(value)
 
