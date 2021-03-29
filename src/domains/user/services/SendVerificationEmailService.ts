@@ -1,14 +1,11 @@
-import { Either, left } from '@shared/Either'
-import { InvalidUserIdError } from '@shared/errors/User'
-import {
-  createTestAccount,
-  createTransport,
-  getTestMessageUrl,
-  TestAccount,
-  Transporter,
-} from 'nodemailer'
+import 'dotenv/config'
+
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { createTransport, getTestMessageUrl, Transporter } from 'nodemailer'
 import { inject, injectable } from 'tsyringe'
+
+import { Either, left, right } from '@shared/Either'
+import { InvalidUserIdError } from '@shared/errors/User'
 import { IUsersRepository } from '../repositories/IUsersRepository'
 
 interface ISendMailDTO {
@@ -16,10 +13,9 @@ interface ISendMailDTO {
   name: string
 }
 
-type IResponse = Either<InvalidUserIdError, void>
+type IResponse = Either<InvalidUserIdError, any>
 @injectable()
 export class SendVerificationEmailService {
-  private account: TestAccount
   private transporter: Transporter
 
   constructor(
@@ -34,7 +30,12 @@ export class SendVerificationEmailService {
     if (userOrError.isLeft()) return left(new InvalidUserIdError())
 
     const user = userOrError.value
-    await this.sendMail({ address: user.email, name: user.email })
+    const message = await this.sendMail({
+      address: user.email,
+      name: user.email,
+    })
+
+    return right(message)
   }
 
   private async sendMail(to: ISendMailDTO) {
@@ -52,24 +53,17 @@ export class SendVerificationEmailService {
 
     console.log('Message sent', message.messageId)
     console.log('Preview url', getTestMessageUrl(message))
+    return message
   }
 
   private async makeTransporter() {
-    await this.makeAccount()
-
     this.transporter = createTransport({
-      port: this.account.smtp.port,
-      secure: this.account.smtp.secure,
+      port: 2525,
+      host: 'smtp.mailtrap.io',
       auth: {
-        user: this.account.user,
-        pass: this.account.pass,
+        user: process.env.MAIL_TRAP_USER,
+        pass: process.env.MAIL_TRAP_PASSWORD,
       },
-      host: this.account.smtp.host,
     } as SMTPTransport.Options)
-  }
-
-  private async makeAccount() {
-    const account = await createTestAccount()
-    this.account = account
   }
 }
