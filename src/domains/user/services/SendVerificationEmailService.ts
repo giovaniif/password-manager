@@ -4,54 +4,72 @@ import {
   createTestAccount,
   createTransport,
   getTestMessageUrl,
+  TestAccount,
+  Transporter,
 } from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import { inject, injectable } from 'tsyringe'
 import { IUsersRepository } from '../repositories/IUsersRepository'
 
 interface ISendMailDTO {
-  userId: string
+  address: string
+  name: string
 }
 
 type IResponse = Either<InvalidUserIdError, void>
 @injectable()
 export class SendVerificationEmailService {
+  private account: TestAccount
+  private transporter: Transporter
+
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({ userId }: ISendMailDTO): Promise<IResponse> {
+  public async execute(userId: string): Promise<IResponse> {
     if (!userId) return left(new InvalidUserIdError())
 
     const userOrError = await this.usersRepository.findById(userId)
-
     if (userOrError.isLeft()) return left(new InvalidUserIdError())
-    // const account = await createTestAccount()
-    // const transporter = createTransport({
-    //   port: account.smtp.port,
-    //   secure: account.smtp.secure,
-    //   auth: {
-    //     user: account.user,
-    //     pass: account.pass,
-    //   },
-    //   host: account.smtp.host,
-    // } as SMTPTransport.Options)
-    // // Used this to fix the types issues with @types/nodemailer
-    // const message = await transporter.sendMail({
-    //   from: {
-    //     address: 'riccog.25@gmail.com',
-    //     name: 'Giovani',
-    //   },
-    //   to: {
-    //     address: to,
-    //     name: 'Receptor',
-    //   },
-    //   subject: 'Password manager',
-    //   text: 'Teste de email',
-    // })
-    // console.log('Message sent', message.messageId)
-    // console.log('Preview url', getTestMessageUrl(message))
-    // return message
+
+    const user = userOrError.value
+    await this.sendMail({ address: user.email, name: user.email })
+  }
+
+  private async sendMail(to: ISendMailDTO) {
+    await this.makeTransporter()
+
+    const message = await this.transporter.sendMail({
+      from: {
+        address: 'riccog.25@gmail.com',
+        name: 'Giovani',
+      },
+      to,
+      subject: 'Password manager',
+      text: 'Teste de email',
+    })
+
+    console.log('Message sent', message.messageId)
+    console.log('Preview url', getTestMessageUrl(message))
+  }
+
+  private async makeTransporter() {
+    await this.makeAccount()
+
+    this.transporter = createTransport({
+      port: this.account.smtp.port,
+      secure: this.account.smtp.secure,
+      auth: {
+        user: this.account.user,
+        pass: this.account.pass,
+      },
+      host: this.account.smtp.host,
+    } as SMTPTransport.Options)
+  }
+
+  private async makeAccount() {
+    const account = await createTestAccount()
+    this.account = account
   }
 }
