@@ -1,8 +1,7 @@
 import 'dotenv/config'
 
-import SMTPTransport from 'nodemailer/lib/smtp-transport'
-import { createTransport, getTestMessageUrl, Transporter } from 'nodemailer'
 import { inject, injectable } from 'tsyringe'
+import sendGridMail from '@sendgrid/mail'
 
 import { Either, left, right } from '@shared/Either'
 import { InvalidUserIdError } from '@shared/errors/User'
@@ -13,11 +12,11 @@ interface ISendMailDTO {
   name: string
 }
 
-type IResponse = Either<InvalidUserIdError, any>
+type IResponse = Either<InvalidUserIdError | Error, any>
+
+sendGridMail.setApiKey(process.env.SEND_GRID_API_KEY)
 @injectable()
 export class SendVerificationEmailService {
-  private transporter: Transporter
-
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
@@ -30,40 +29,28 @@ export class SendVerificationEmailService {
     if (userOrError.isLeft()) return left(new InvalidUserIdError())
 
     const user = userOrError.value
-    const message = await this.sendMail({
-      address: user.email,
-      name: user.email,
-    })
 
-    return right(message)
+    try {
+      const message = await this.sendMail({
+        address: user.email,
+        name: user.email,
+      })
+
+      return right(message)
+    } catch (err) {
+      console.log(err)
+      return left(new Error('Something went wrong, please try again'))
+    }
   }
 
-  private async sendMail(to: ISendMailDTO) {
-    await this.makeTransporter()
+  private async sendMail({ address }: ISendMailDTO) {
+    const message = {
+      to: address,
+      from: process.env.SEND_GRID_MAIL, // Use the email address or domain you verified above
+      subject: 'Verify Account || Password Manager',
+      text: 'Please verify your account',
+    }
 
-    const message = await this.transporter.sendMail({
-      from: {
-        address: 'riccog.25@gmail.com',
-        name: 'Giovani',
-      },
-      to,
-      subject: 'Password manager',
-      text: 'Teste de email',
-    })
-
-    console.log('Message sent', message.messageId)
-    console.log('Preview url', getTestMessageUrl(message))
-    return message
-  }
-
-  private async makeTransporter() {
-    this.transporter = createTransport({
-      port: 2525,
-      host: 'smtp.mailtrap.io',
-      auth: {
-        user: process.env.MAIL_TRAP_USER,
-        pass: process.env.MAIL_TRAP_PASSWORD,
-      },
-    } as SMTPTransport.Options)
+    await sendGridMail.send(message)
   }
 }

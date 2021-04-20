@@ -6,6 +6,7 @@ import { ICreateUserDTO } from '@domains/user/dtos/ICreateUserDTO'
 import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { Either, left, right } from '@shared/Either'
 import { PasswordTooShortError, RepeatedEmailError } from '@shared/errors/User'
+import { SendVerificationEmailService } from './SendVerificationEmailService'
 
 type IResponse = Either<RepeatedEmailError | PasswordTooShortError, User>
 
@@ -37,6 +38,9 @@ export class CreateUserService {
     })
 
     if (userOrError.isLeft()) return left(userOrError.value)
+
+    const mailService = new SendVerificationEmailService(this.usersRepository)
+    await mailService.execute(userOrError.value.id)
 
     return right(userOrError.value)
   }
