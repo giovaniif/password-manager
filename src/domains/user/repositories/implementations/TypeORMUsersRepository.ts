@@ -42,10 +42,12 @@ export class TypeORMUsersRepository implements IUsersRepository {
     return right(user)
   }
 
-  public async setVerified(id: string): Promise<void> {
+  public async setVerified(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: id })
     user.isValid = true
 
     await this.usersRepository.save(user)
+
+    return user
   }
 }
