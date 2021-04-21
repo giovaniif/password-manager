@@ -9,6 +9,6 @@ const createUsers = new CreateUserController()
 const setVerified = new SetUserVerifiedController()
 
 userRouter.post('/', adaptRoute(createUsers))
-userRouter.post('/verify/:id', adaptRoute(setVerified))
+userRouter.post('/verify/:userId', adaptRoute(setVerified))
 
 export { userRouter }
