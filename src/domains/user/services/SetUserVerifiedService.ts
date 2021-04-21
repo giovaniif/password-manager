@@ -25,6 +25,7 @@ export class SetUserVerifiedService {
 
       return right(verifiedUser)
     } catch (err) {
+      console.log(err)
       return left(new Error(err.message))
     }
   }
