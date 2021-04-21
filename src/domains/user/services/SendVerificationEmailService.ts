@@ -1,25 +1,23 @@
 import 'dotenv/config'
 
 import { inject, injectable } from 'tsyringe'
-import sendGridMail from '@sendgrid/mail'
+import path from 'path'
 
 import { Either, left, right } from '@shared/Either'
 import { InvalidUserIdError } from '@shared/errors/User'
 import { IUsersRepository } from '../repositories/IUsersRepository'
-
-interface ISendMailDTO {
-  address: string
-  name: string
-}
+import { IMailProvider } from '@shared/container/providers/models/IMailProvider'
 
 type IResponse = Either<InvalidUserIdError | Error, any>
 
-sendGridMail.setApiKey(process.env.SEND_GRID_API_KEY)
 @injectable()
 export class SendVerificationEmailService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   public async execute(userId: string): Promise<IResponse> {
@@ -30,10 +28,18 @@ export class SendVerificationEmailService {
 
     const user = userOrError.value
 
+    const link = this.getResetPasswordLink(userId)
+
     try {
-      const message = await this.sendMail({
-        address: user.email,
-        name: user.email,
+      const message = await this.mailProvider.sendMail({
+        subject: 'Verify your account || Password Manager',
+        templateData: {
+          file: this.getSendVerificationEmailTemplateFile(),
+          variables: {
+            link,
+          },
+        },
+        to: user.email,
       })
 
       return right(message)
@@ -43,14 +49,18 @@ export class SendVerificationEmailService {
     }
   }
 
-  private async sendMail({ address }: ISendMailDTO) {
-    const message = {
-      to: address,
-      from: process.env.SEND_GRID_MAIL, // Use the email address or domain you verified above
-      subject: 'Verify Account || Password Manager',
-      text: 'Please verify your account',
-    }
+  private getResetPasswordLink(userId: string): string {
+    return `${process.env.APP_API_URL}/verify/${userId}`
+  }
 
-    await sendGridMail.send(message)
+  private getSendVerificationEmailTemplateFile(): string {
+    const sendVerificationTemplate = path.resolve(
+      __dirname,
+      '..',
+      'views',
+      'verify-email.hbs',
+    )
+
+    return sendVerificationTemplate
   }
 }

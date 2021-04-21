@@ -1,4 +1,4 @@
-import { inject, injectable } from 'tsyringe'
+import { container, inject, injectable } from 'tsyringe'
 
 import { User } from '@domains/user/models/User'
 import { IUsersRepository } from '@domains/user/repositories/IUsersRepository'
@@ -39,7 +39,7 @@ export class CreateUserService {
 
     if (userOrError.isLeft()) return left(userOrError.value)
 
-    const mailService = new SendVerificationEmailService(this.usersRepository)
+    const mailService = container.resolve(SendVerificationEmailService)
     await mailService.execute(userOrError.value.id)
 
     return right(userOrError.value)
