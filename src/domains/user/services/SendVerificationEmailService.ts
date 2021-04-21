@@ -50,7 +50,7 @@ export class SendVerificationEmailService {
   }
 
   private getResetPasswordLink(userId: string): string {
-    return `${process.env.APP_API_URL}/verify/${userId}`
+    return `${process.env.APP_WEB_URL}/verify/${userId}`
   }
 
   private getSendVerificationEmailTemplateFile(): string {
