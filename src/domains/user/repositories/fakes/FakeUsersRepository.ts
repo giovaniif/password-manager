@@ -36,4 +36,12 @@ export class FakeUsersRepository implements IUsersRepository {
 
     return right(user)
   }
+
+  public async setVerified(id: string): Promise<void> {
+    const userIndex = this.users.findIndex(user => user.id === id)
+    this.users[userIndex] = {
+      ...this.users[userIndex],
+      isValid: true,
+    }
+  }
 }
