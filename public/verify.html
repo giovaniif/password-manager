@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify your account</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        outline: 0;
+      }
+
+      main {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: sans-serif;
+        color: #333;
+      }
+
+      h1 {
+        margin-bottom: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="verify-title">Verifying your account...</h1>
+      <span class="verify-span">This make take a few seconds</span>
+    </main>
+
+    <script>
+      async function setVerified() {
+        const title = document.querySelector('h1.verify-title')
+        const span = document.querySelector('span.verify-span')
+
+        try {
+          const appUrl = window.location.origin
+          const urlParams = new URLSearchParams(window.location.search)
+          const userId = urlParams.get('id')
+
+          const fetchResponse = await fetch(
+            `${appUrl}/users/verify/${userId}`,
+            { method: 'POST' },
+          )
+
+          if (fetchResponse.status !== 200) throw new Error()
+
+          const response = await fetchResponse.json()
+
+          title.innerHTML = 'Account verified'
+          span.innerHTML = 'You can close this tab and go back to the app'
+        } catch (err) {
+          title.innerHTML = 'An error occured'
+          span.innerHTML =
+            'Please get in touch with our team at riccog.25@gmail.com'
+        }
+      }
+
+      setVerified()
+    </script>
+  </body>
+</html>
