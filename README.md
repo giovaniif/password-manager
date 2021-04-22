@@ -8,4 +8,5 @@ I created this project with the purpose of putting in practice a few concepts I 
 - [x] Add Either error validation Patter
 - [x] Add dependency injection
 - [x] Refactor to DDD
-- [ ] Implement email verification
+- [x] Implement email verification
+- [ ] Add request rate limiter
