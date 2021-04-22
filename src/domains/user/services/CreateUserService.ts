@@ -61,7 +61,7 @@ export class CreateUserService {
   }
 
   private getSendVerificationMailLink(userId: string): string {
-    return `${process.env.APP_WEB_URL}/verify/${userId}`
+    return `${process.env.APP_API_URL}:${process.env.APP_PORT}/verify.html?id=${userId}`
   }
 
   private getSendVerificationEmailTemplateFile(): string {
