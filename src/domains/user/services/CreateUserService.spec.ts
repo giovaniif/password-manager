@@ -4,18 +4,24 @@ import { IHashProvider } from '@shared/container/providers/models/IHashProvider'
 import { IUsersRepository } from '@domains/user/repositories/IUsersRepository'
 import { FakeHashProvider } from '@shared/container/providers/fakes/FakeHashProvider'
 import { User } from '../models/User'
+import { IMailProvider } from '@shared/container/providers/models/IMailProvider'
+import { FakeMailProvider } from '@shared/container/providers/fakes/FakeMailProvider'
 
 let createUserService: CreateUserService
 let fakeUsersRepository: IUsersRepository
 let fakeHashProvider: IHashProvider
+let fakeMailProvider: IMailProvider
 
 describe('SignUp', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository()
     fakeHashProvider = new FakeHashProvider()
+    fakeMailProvider = new FakeMailProvider()
+
     createUserService = new CreateUserService(
       fakeUsersRepository,
       fakeHashProvider,
+      fakeMailProvider,
     )
   })
 
