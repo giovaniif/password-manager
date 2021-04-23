@@ -9,4 +9,4 @@ I created this project with the purpose of putting in practice a few concepts I 
 - [x] Add dependency injection
 - [x] Refactor to DDD
 - [x] Implement email verification
-- [ ] Add request rate limiter
+- [x] Add request rate limiter
